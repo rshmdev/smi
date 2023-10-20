@@ -1,22 +1,55 @@
 
-Teste Tecnico SMI
+## Rodando localmente
 
-CRUD full stack utlizando next.js com redux e MUI, para o backend foi utlizado Node.js + express e sqlite
-
-
-## Requisitos
-
-- Docker instalado
-
-## Como Usar
-
-### 1. Clonando o Repositório
-
-Clone o repositório para sua máquina local:
+Clone o projeto
 
 ```bash
-git clone https://github.com/seu-username/seu-projeto.git
+  git clone https://github.com/rshmdev/smi.git
+```
 
+Entre no diretório do projeto
 
-docker-compose up --build
+```bash
+  cd smi
+```
+
+### Backend
+
+Entre no diretório do backend 
+
+```bash
+  cd backend
+```
+
+Instale as dependências
+
+```bash
+  npm install
+```
+
+Inicie o servidor
+
+```bash
+  npm start
+```
+
+### Frontend
+
+Entre no diretório do frontend 
+
+```bash
+  cd front
+```
+
+Instale as dependências
+
+```bash
+  npm install
+```
+
+Inicie o servidor
+
+```bash
+  npm run dev
+```
 
