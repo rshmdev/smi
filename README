@@ -1,1 +1,22 @@
 
+Teste Tecnico SMI
+
+CRUD full stack utlizando next.js com redux e MUI, para o backend foi utlizado Node.js + express e sqlite
+
+
+## Requisitos
+
+- Docker instalado
+
+## Como Usar
+
+### 1. Clonando o Repositório
+
+Clone o repositório para sua máquina local:
+
+```bash
+git clone https://github.com/seu-username/seu-projeto.git
+
+
+docker-compose up --build
+
