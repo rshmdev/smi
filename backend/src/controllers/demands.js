@@ -4,12 +4,11 @@ import {
   updateItem,
   deleteItem,
   getItemById,
-  deleteDemandItem,
 } from "../db/db.js";
 
 export const getAllDemands = async (req, res) => {
   try {
-    const items = await getItems(); // Aguarde a resolução da promessa
+    const items = await getItems();
     res.json(items);
   } catch (error) {
     res.status(500).json({ message: "Erro ao obter demandas." });
@@ -28,10 +27,10 @@ export const CreateDemand = async (req, res) => {
 };
 
 export const getDemandById = async (req, res) => {
-  const { id } = req.params; // Obtenha o ID do parâmetro da rota
+  const { id } = req.params;
 
   try {
-    const item = await getItemById(id); // Aguarde a resolução da promessa
+    const item = await getItemById(id);
     if (!item) {
       return res.status(404).json({ message: "Item não encontrado." });
     }
@@ -47,7 +46,7 @@ export const UpdateDemand = async (req, res) => {
 
   try {
     const updatedItem = req.body;
-    const item = await updateItem(id, updatedItem); // Note o uso de "await" aqui
+    const item = await updateItem(id, updatedItem);
     res.json(item);
   } catch (error) {
     res.status(404).json({ error: "Item not found" });
@@ -61,18 +60,5 @@ export const deleteDemand = (req, res) => {
     res.json({ message: "Item deleted" });
   } else {
     res.status(404).json({ error: "Item not found" });
-  }
-};
-
-export const DeleteDemandItems = async (req, res) => {
-  const id = req.params.id;
-
-  const itemId = req.params.itemId;
-
-  try {
-    await deleteDemandItem(id, itemId);
-    res.json({ success: true });
-  } catch (error) {
-    res.status(500).json({ error: "Internal Server Error" });
   }
 };

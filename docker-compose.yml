@@ -1,16 +1,18 @@
 version: '3'
-
 services:
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
-
+  frontend: 
+    build: ./front 
+    ports: #
+      - "3000:3000" 
+    container_name: frontend-docker
+    restart: always 
+    links:
+      - backend
+ 
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    build: ./backend
     ports:
       - "4000:4000"
+    container_name: backend-docker
+    restart: always
+ 

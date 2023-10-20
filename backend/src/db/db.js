@@ -75,54 +75,39 @@ export const updateItem = async (id, updatedItems) => {
     driver: sqlite3.Database,
   });
 
-  const demand = await getItemById(id); // Obtém a demanda atual
-  const items = JSON.parse(demand.itens);
+  try {
+    const demand = await getItemById(id);
+    const items = JSON.parse(demand.itens);
 
-  const newItems = items.map((existingItem) => {
-    const updatedItem = updatedItems.itens.find(
-      (item) => item.id === existingItem.id
+    const updatedItem = updatedItems.items;
+
+    const somaTotalProd = items.reduce(
+      (acc, item) => acc + parseInt(item.total_prod, 10),
+      0
     );
-    if (updatedItem) {
-      return {
-        ...existingItem,
-        tons: updatedItem.tons,
-        total_prod: updatedItem.total_prod,
-      };
-    } else {
-      return existingItem;
-    }
-  });
+    const somaTons = items.reduce(
+      (acc, item) => acc + parseInt(item.tons, 10),
+      0
+    );
+    // Obter os SKUs únicos
+    const uniqueSkus = new Set(items.map((item) => item.sku));
+    const totalUniqueSkus = uniqueSkus.size;
 
-  let somaTotalProd = 0;
+    // Atualizar no banco de dados
+    await db.run(
+      `UPDATE demands SET skus = ?, total_prod = ?, total_plan = ? WHERE id = ?`,
+      [totalUniqueSkus, somaTotalProd, somaTons, id]
+    );
 
-  newItems.forEach((item) => {
-    somaTotalProd += parseInt(item.total_prod, 10); // Converte para número e soma
-  });
+    await db.run("UPDATE demands SET itens = ? WHERE id = ?", [
+      JSON.stringify(updatedItem),
+      id,
+    ]);
 
-  let somaTons = 0;
-
-  items.forEach((item) => {
-    somaTons += parseInt(item.tons, 10); // Converte para número e soma
-  });
-
-  const uniqueSkus = new Set();
-
-  items.forEach((item) => {
-    uniqueSkus.add(item.sku);
-  });
-
-  const totalUniqueSkus = uniqueSkus.size;
-
-  await db.run(
-    `UPDATE demands SET skus= ${totalUniqueSkus}, total_prod = ${somaTotalProd}, total_plan = ${somaTons} WHERE id = ${id}`
-  );
-
-  await db.run("UPDATE demands SET itens = ? WHERE id = ?", [
-    JSON.stringify(newItems),
-    id,
-  ]);
-
-  return await getItemById(id);
+    return await getItemById(id);
+  } finally {
+    await db.close();
+  }
 };
 
 export const deleteItem = async (id) => {
@@ -130,24 +115,7 @@ export const deleteItem = async (id) => {
     filename: "./database.db",
     driver: sqlite3.Database,
   });
+
   await db.run("DELETE FROM demands WHERE id = ?", [id]);
   return await getItemById(id);
-};
-
-export const deleteDemandItem = async (id, itemId) => {
-  const db = await open({
-    filename: "./database.db",
-    driver: sqlite3.Database,
-  });
-
-  const currentItem = await db.get("SELECT * FROM demands WHERE id = ?", [id]);
-
-  const currentItems = JSON.parse(currentItem.itens);
-
-  const updatedItemsArray = currentItems.filter((item) => item.id !== itemId);
-
-  await db.run("UPDATE demands SET itens = ? WHERE id = ?", [
-    JSON.stringify(updatedItemsArray),
-    id,
-  ]);
 };
